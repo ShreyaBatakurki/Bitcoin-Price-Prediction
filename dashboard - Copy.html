@@ -1,0 +1,274 @@
+{% extends "base.html" %}
+{% block title %}Dashboard{% endblock %}
+
+{% block content %}
+<div class="row">
+  <!-- Sidebar -->
+  <div class="col-md-3 col-lg-2 bg-dark text-white p-3" style="min-height: 90vh;">
+    <div class="text-center mb-4">
+      <img src="https://cdn-icons-png.flaticon.com/512/3135/3135715.png" class="rounded-circle" width="80">
+      <h5 class="mt-2">{{ user.name }}</h5>
+    </div>
+    <ul class="nav flex-column">
+      <li class="nav-item"><a href="#" class="nav-link text-white" onclick="showSection('dashboard-section')">📊 Dashboard</a></li>
+      <li class="nav-item"><a href="#" class="nav-link text-white" onclick="showSection('btc-section')">₿ Bitcoin Predict Price</a></li>
+      <li class="nav-item"><a href="#" class="nav-link text-white" onclick="showSection('block-section')">🔗 Block Validation</a></li>
+	  
+	  <li class="nav-item"><a href="#" class="nav-link text-white" onclick="showSection('block-validate')">🔗 Block Hash Validate</a></li>
+
+
+      <li class="nav-item"><a href="#" class="nav-link text-white" onclick="showSection('profile-section')">👤 My Profile</a></li>
+      <li class="nav-item"><a href="#" class="nav-link text-white" onclick="showSection('setting-section')">⚙️ Setting</a></li>
+      <li class="nav-item"><a href="/logout" class="nav-link text-danger">🚪 Logout</a></li>
+    </ul>
+  </div>
+
+  <!-- Main Content -->
+  <div class="col-md-9 col-lg-10 p-4">
+
+    <!-- Dashboard -->
+    <div id="dashboard-section" class="section">
+      <h2>Dashboard</h2>
+      <p>Welcome <b>{{ user.name }}</b> 👋</p>
+      <h5>Current Bitcoin Price: <span id="btc-price">Loading...</span></h5>
+    </div>
+
+    <!-- Bitcoin Predict Price -->
+<!-- Bitcoin Predict Price -->
+<div id="btc-section" class="section d-none">
+  <h2>Bitcoin Predict Price</h2>
+  <form id="predict-form">
+    <label>From Date:</label>
+    <input type="date" class="form-control mb-2" name="from_date" required>
+    <label>To Date:</label>
+    <input type="date" class="form-control mb-2" name="to_date" required>
+    <button class="btn btn-warning" type="submit">Predict</button>
+  </form>
+
+  <div id="predict-error" class="alert alert-danger mt-3 d-none"></div>
+
+  <div class="mt-4">
+    <h5>Predicted Prices</h5>
+    <div class="table-responsive">
+      <table class="table table-dark table-striped" id="predict-table">
+        <thead>
+          <tr><th>Date</th><th>Predicted Price (USD)</th></tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+    </div>
+    <canvas id="predict-chart" style="max-height: 380px;"></canvas>
+  </div>
+</div>
+
+<!-- Block Validation -->
+<div id="block-section" class="section d-none">
+  <h2>Block Validation</h2>
+  <form id="block-form">
+    <label>Block Height:</label>
+    <input type="text" class="form-control mb-2" name="block_id" required>
+    <label>Hash Value:</label>
+    <input type="text" class="form-control mb-2" name="hash_value" required>
+    <button class="btn btn-warning" type="submit">Validate</button>
+  </form>
+
+  <div id="block-result" class="mt-3 d-none">
+    <div id="block-valid" class="alert d-none"></div>
+    <div class="card bg-dark mt-2 d-none" id="block-details">
+      <div class="card-body">
+        <p class="mb-1"><b>Height:</b> <span id="bd-height"></span></p>
+        <p class="mb-1"><b>Timestamp:</b> <span id="bd-time"></span></p>
+        <p class="mb-1"><b>Tx Count:</b> <span id="bd-tx"></span></p>
+        <p class="mb-1"><b>Size (bytes):</b> <span id="bd-size"></span></p>
+        <p class="mb-1"><b>Merkle Root:</b> <span id="bd-merkle"></span></p>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- Block Validation -->
+<div id="block-Validate" class="section d-none">
+<h3 class="text-warning">🔒 Block Hash Validate</h3>
+  <form method="POST">
+    <div class="form-group">
+      <label>Enter Block No or Hash:</label>
+      <input type="text" name="block_id" class="form-control" placeholder="e.g. 170 or block hash" required>
+    </div>
+    <button type="submit" class="btn btn-warning mt-2">Check</button>
+  </form>
+
+  {% if block_data %}
+  <hr>
+  <h5>Block Details</h5>
+  <table class="table table-bordered table-sm">
+    <tr><th>Block Hash</th><td>{{ block_data.hash }}</td></tr>
+    <tr><th>Height</th><td>{{ block_data.height }}</td></tr>
+    <tr><th>Time</th><td>{{ block_data.time }}</td></tr>
+    <tr><th>Merkle Root</th><td>{{ block_data.mrkl_root }}</td></tr>
+    <tr><th>Nonce</th><td>{{ block_data.nonce }}</td></tr>
+  </table>
+
+  <h5>Validation Result:</h5>
+  <p><b>Recomputed Hash:</b> {{ recomputed_hash }}</p>
+  <p class="text-{{ 'success' if validation_status.startswith('✅') else 'danger' }}">
+    {{ validation_status }}
+  </p>
+  {% endif %}
+</div>
+
+
+    <!-- Block Validation -->
+    <div id="block-section" class="section d-none">
+      <h2>Block Validation</h2>
+      <form method="POST" action="#">
+        <label>Block ID:</label>
+        <input type="text" class="form-control mb-2" name="block_id" required>
+        <label>Hash Value:</label>
+        <input type="text" class="form-control mb-2" name="hash_value" required>
+        <button class="btn btn-warning">Validate</button>
+      </form>
+      <div class="mt-3">
+        <p><i>(Backend blockchain validation can be integrated)</i></p>
+      </div>
+    </div>
+
+    <!-- My Profile -->
+    <div id="profile-section" class="section d-none">
+      <h2>My Profile</h2>
+      <p><b>Name:</b> {{ user.name }}</p>
+      <p><b>Email:</b> {{ user.email }}</p>
+      <p><b>Mobile:</b> {{ user.mobile }}</p>
+    </div>
+
+    <!-- Setting -->
+    <div id="setting-section" class="section d-none">
+      <h2>Update Password</h2>
+      <form method="POST" action="/update_password">
+        <input type="password" class="form-control mb-2" name="old_password" placeholder="Old Password" required>
+        <input type="password" class="form-control mb-2" name="new_password" placeholder="New Password" required>
+        <button class="btn btn-warning">Update</button>
+      </form>
+    </div>
+
+  </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+
+<!-- Chart.js CDN -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<script>
+// ===== Predict Prices (AJAX) =====
+let predictChart = null;
+
+$("#predict-form").on("submit", function(e){
+  e.preventDefault();
+  $("#predict-error").addClass("d-none").text("");
+  $("#predict-table tbody").empty();
+  const formData = new FormData(this);
+
+  fetch("/predict_prices", { method: "POST", body: formData })
+    .then(res => res.json())
+    .then(data => {
+      if (!data.ok) {
+        $("#predict-error").removeClass("d-none").text(data.error || "Failed to predict.");
+        return;
+      }
+      const rows = data.rows || [];
+      // Table
+      const tbody = $("#predict-table tbody");
+      rows.forEach(r => {
+        const tr = `<tr><td>${r.date}</td><td>$${r.predicted.toLocaleString()}</td></tr>`;
+        tbody.append(tr);
+      });
+      // Chart
+      const labels = rows.map(r => r.date);
+      const values = rows.map(r => r.predicted);
+      const ctx = document.getElementById("predict-chart").getContext("2d");
+      if (predictChart) predictChart.destroy();
+      predictChart = new Chart(ctx, {
+        type: "line",
+        data: {
+          labels: labels,
+          datasets: [{ label: "Predicted BTC-USD", data: values }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          scales: { y: { ticks: { callback: v => '$' + v } } }
+        }
+      });
+    })
+    .catch(err => {
+      $("#predict-error").removeClass("d-none").text(err.toString());
+    });
+});
+
+// ===== Block Validation (AJAX) =====
+$("#block-form").on("submit", function(e){
+  e.preventDefault();
+  const formData = new FormData(this);
+
+  fetch("/validate_block", { method: "POST", body: formData })
+    .then(res => res.json())
+    .then(data => {
+      $("#block-result").removeClass("d-none");
+      const validBox = $("#block-valid");
+      const detailsCard = $("#block-details");
+
+      if (!data.ok) {
+        validBox.removeClass("d-none alert-success").addClass("alert-danger")
+                .text(data.error || "Validation failed.");
+        detailsCard.addClass("d-none");
+        return;
+      }
+
+      if (data.valid) {
+        validBox.removeClass("d-none alert-danger").addClass("alert-success")
+                .text("Valid ✅ — Hash matches this block height.");
+        if (data.details) {
+          $("#bd-height").text(data.details.height ?? "");
+          const ts = data.details.timestamp ? new Date(data.details.timestamp * 1000).toLocaleString() : "";
+          $("#bd-time").text(ts);
+          $("#bd-tx").text(data.details.tx_count ?? "");
+          $("#bd-size").text(data.details.size ?? "");
+          $("#bd-merkle").text(data.details.merkle_root ?? "");
+          detailsCard.removeClass("d-none");
+        }
+      } else {
+        validBox.removeClass("d-none alert-success").addClass("alert-danger")
+                .html(`Invalid ❌ — Expected Hash: <code>${data.expected_hash}</code>`);
+        detailsCard.addClass("d-none");
+      }
+    })
+    .catch(err => {
+      $("#block-result").removeClass("d-none");
+      $("#block-valid").removeClass("d-none alert-success").addClass("alert-danger").text(err.toString());
+      $("#block-details").addClass("d-none");
+    });
+});
+</script>
+
+
+<script>
+// Toggle Sections
+function showSection(id) {
+  document.querySelectorAll('.section').forEach(sec => sec.classList.add('d-none'));
+  document.getElementById(id).classList.remove('d-none');
+}
+
+// Load Bitcoin Price
+function loadPrice() {
+  $.get("https://api.coingecko.com/api/v3/simple/price?ids=bitcoin&vs_currencies=usd", function(data){
+    $("#btc-price").text("$" + data.bitcoin.usd);
+  });
+}
+$(document).ready(function(){
+  loadPrice();
+  setInterval(loadPrice, 10000);
+});
+</script>
+{% endblock %}

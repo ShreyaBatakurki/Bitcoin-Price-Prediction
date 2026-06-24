@@ -1,0 +1,154 @@
+{% extends "base.html" %}
+{% block title %}About LedgerVista{% endblock %}
+{% block content %}
+
+<!-- Hero Section -->
+<div class="row align-items-center mb-5">
+  <div class="col-md-6">
+    <h1 class="display-4 fw-bold text-warning">About LedgerVista</h1>
+    <p class="lead">Revolutionizing cryptocurrency investment through advanced artificial intelligence and machine learning technologies.</p>
+  </div>
+  <div class="col-md-6">
+    <img src="{{ url_for('static', filename='images/a.png') }}" class="img-fluid rounded-3" alt="About Us">
+  </div>
+</div>
+
+<!-- Mission Section -->
+<div class="crypto-card p-5 mb-5">
+  <div class="row">
+    <div class="col-md-8">
+      <h2 class="text-warning mb-4">Our Mission</h2>
+      <p class="fs-5">To democratize access to sophisticated cryptocurrency market analysis and provide retail investors with institutional-grade prediction tools. We believe everyone should have the opportunity to make informed investment decisions in the volatile crypto market.</p>
+      
+      <div class="row mt-4">
+        <div class="col-md-6">
+          <h5><i class="fas fa-bullseye text-warning me-2"></i>Our Vision</h5>
+          <p>Creating the most accurate and reliable cryptocurrency prediction platform using cutting-edge AI technology.</p>
+        </div>
+        <div class="col-md-6">
+          <h5><i class="fas fa-values text-warning me-2"></i>Our Values</h5>
+          <p>Transparency, accuracy, innovation, and user empowerment drive everything we do.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Technology Stack -->
+<h2 class="text-center mb-4 text-warning">Advanced Technology Stack</h2>
+<div class="row g-4 mb-5">
+  <div class="col-md-3 col-6">
+    <div class="crypto-card p-4 text-center">
+      <i class="fas fa-robot fa-3x text-warning mb-3"></i>
+      <h5>Machine Learning</h5>
+      <p class="text-muted small">Random Forest algorithms trained on historical market data</p>
+    </div>
+  </div>
+  <div class="col-md-3 col-6">
+    <div class="crypto-card p-4 text-center">
+      <i class="fas fa-chart-line fa-3x text-warning mb-3"></i>
+      <h5>Technical Analysis</h5>
+      <p class="text-muted small">Advanced indicators and pattern recognition</p>
+    </div>
+  </div>
+  <div class="col-md-3 col-6">
+    <div class="crypto-card p-4 text-center">
+      <i class="fas fa-database fa-3x text-warning mb-3"></i>
+      <h5>Real-Time Data</h5>
+      <p class="text-muted small">Live feeds from multiple cryptocurrency exchanges</p>
+    </div>
+  </div>
+  <div class="col-md-3 col-6">
+    <div class="crypto-card p-4 text-center">
+      <i class="fas fa-network-wired fa-3x text-warning mb-3"></i>
+      <h5>API Integration</h5>
+      <p class="text-muted small">Seamless integration with major crypto data providers</p>
+    </div>
+  </div>
+</div>
+
+<!-- Team Section -->
+<h2 class="text-center mb-4 text-warning">How It Works</h2>
+<div class="row g-4 mb-5">
+  <div class="col-md-4">
+    <div class="crypto-card p-4 text-center h-100">
+      <div class="feature-icon">1</div>
+      <h5>Data Collection</h5>
+      <p>We gather real-time market data, historical prices, trading volumes, and social sentiment from multiple reliable sources.</p>
+    </div>
+  </div>
+  <div class="col-md-4">
+    <div class="crypto-card p-4 text-center h-100">
+      <div class="feature-icon">2</div>
+      <h5>AI Analysis</h5>
+      <p>Our machine learning models process the data, identifying patterns and trends that human analysts might miss.</p>
+    </div>
+  </div>
+  <div class="col-md-4">
+    <div class="crypto-card p-4 text-center h-100">
+      <div class="feature-icon">3</div>
+      <h5>Prediction Generation</h5>
+      <p>Accurate price predictions and market insights are generated and delivered to you in an easy-to-understand format.</p>
+    </div>
+  </div>
+</div>
+
+<!-- Features -->
+<div class="crypto-card p-5 mb-5">
+  <h2 class="text-center text-warning mb-5">Key Features</h2>
+  <div class="row g-4">
+    <div class="col-md-6">
+      <div class="d-flex">
+        <i class="fas fa-check-circle text-warning me-3 mt-1"></i>
+        <div>
+          <h5>Price Prediction</h5>
+          <p class="text-muted">Accurate short-term and long-term Bitcoin price forecasts</p>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-6">
+      <div class="d-flex">
+        <i class="fas fa-check-circle text-warning me-3 mt-1"></i>
+        <div>
+          <h5>Market Analysis</h5>
+          <p class="text-muted">Comprehensive technical and fundamental analysis</p>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-6">
+      <div class="d-flex">
+        <i class="fas fa-check-circle text-warning me-3 mt-1"></i>
+        <div>
+          <h5>Risk Assessment</h5>
+          <p class="text-muted">Evaluate investment risks with our advanced metrics</p>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-6">
+      <div class="d-flex">
+        <i class="fas fa-check-circle text-warning me-3 mt-1"></i>
+        <div>
+          <h5>Portfolio Tracking</h5>
+          <p class="text-muted">Monitor your cryptocurrency investments in one place</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- CTA Section -->
+<div class="text-center crypto-card p-5">
+  <h3 class="text-warning mb-3">Ready to Start Predicting?</h3>
+  <p class="mb-4">Join thousands of investors who trust BitPredict Pro for their cryptocurrency investment decisions.</p>
+  {% if not session.get('user') %}
+    <button class="btn btn-warning btn-lg fw-bold px-5" data-bs-toggle="modal" data-bs-target="#signupModal">
+      <i class="fas fa-rocket me-2"></i>Get Started Free
+    </button>
+  {% else %}
+    <a href="/dashboard" class="btn btn-warning btn-lg fw-bold px-5">
+      <i class="fas fa-chart-line me-2"></i>Go to Dashboard
+    </a>
+  {% endif %}
+</div>
+
+{% endblock %}

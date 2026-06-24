@@ -1,0 +1,647 @@
+{% extends "base.html" %}
+{% block title %}Dashboard{% endblock %}
+
+{% block content %}
+<div class="row">
+  <!-- Sidebar -->
+  <div class="col-md-3 col-lg-2 sidebar p-4" style="min-height: 90vh;">
+    <div class="text-center mb-4">
+      <img src="https://cdn-icons-png.flaticon.com/512/3135/3135715.png" class="rounded-circle border border-warning" width="80">
+      <h5 class="mt-2 text-primary">{{ user.name }}</h5>
+      <small class="text-muted">Premium Member</small>
+    </div>
+    <ul class="nav flex-column sidebar-nav">
+      <li class="nav-item mb-2">
+        <a href="#" class="nav-link text-primary active-nav" onclick="showSection('dashboard-section')">
+          <i class="fas fa-chart-line me-2"></i>Dashboard
+        </a>
+      </li>
+      <li class="nav-item mb-2">
+        <a href="#" class="nav-link text-primary" onclick="showSection('btc-section')">
+          <i class="fab fa-bitcoin me-2"></i>Price Prediction
+        </a>
+      </li>
+      <li class="nav-item mb-2">
+        <a href="#" class="nav-link text-primary" onclick="showSection('block-section')">
+          <i class="fas fa-cube me-2"></i>Block Validation
+        </a>
+      </li>
+      <li class="nav-item mb-2">
+        <a href="#" class="nav-link text-primary" onclick="showSection('block-validate')">
+          <i class="fas fa-hashtag me-2"></i>Hash Validation
+        </a>
+      </li>
+      <li class="nav-item mb-2">
+        <a href="#" class="nav-link text-primary" onclick="showSection('profile-section')">
+          <i class="fas fa-user me-2"></i>My Profile
+        </a>
+      </li>
+      <li class="nav-item mb-2">
+        <a href="#" class="nav-link text-primary" onclick="showSection('setting-section')">
+          <i class="fas fa-cog me-2"></i>Settings
+        </a>
+      </li>
+      <li class="nav-item mt-4 pt-3 border-top border-secondary">
+        <a href="/logout" class="nav-link text-danger">
+          <i class="fas fa-sign-out-alt me-2"></i>Logout
+        </a>
+      </li>
+    </ul>
+  </div>
+
+  <!-- Main Content -->
+  <div class="col-md-9 col-lg-10 p-4 main-content">
+
+    <!-- Dashboard -->
+    <div id="dashboard-section" class="section">
+      <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2 class="text-warning mb-0">Dashboard Overview</h2>
+        <div class="text-end">
+          <small class="text-muted">Last updated: <span id="last-updated">Just now</span></small>
+        </div>
+      </div>
+      
+      <div class="crypto-card p-3 mb-4">
+        <p class="lead text-primary mb-2">Welcome back, <b>{{ user.name }}</b>! 👋</p>
+        <p class="text-secondary mb-0">Track, predict, and validate Bitcoin data with our advanced tools.</p>
+      </div>
+
+      <!-- Stats Cards -->
+      <div class="row g-3 mb-5">
+        <div class="col-md-4">
+          <div class="crypto-card p-4 text-center">
+            <i class="fab fa-bitcoin fa-2x text-warning mb-3"></i>
+            <h4 class="text-primary" id="btc-price">Loading...</h4>
+            <p class="text-muted mb-0">Current BTC Price</p>
+          </div>
+        </div>
+        <div class="col-md-4">
+          <div class="crypto-card p-4 text-center">
+            <i class="fas fa-chart-line fa-2x text-success mb-3"></i>
+            <h4 class="text-primary">92%</h4>
+            <p class="text-muted mb-0">Prediction Accuracy</p>
+          </div>
+        </div>
+        <div class="col-md-4">
+          <div class="crypto-card p-4 text-center">
+            <i class="fas fa-shield-alt fa-2x text-info mb-3"></i>
+            <h4 class="text-primary">100%</h4>
+            <p class="text-muted mb-0">Validation Success</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Quick Actions -->
+      <h4 class="text-warning mb-3">Quick Actions</h4>
+      <div class="row g-3">
+        <div class="col-md-6">
+          <div class="crypto-card p-4">
+            <h5 class="text-primary mb-3"><i class="fas fa-bolt me-2 text-warning"></i>Quick Prediction</h5>
+            <button class="btn btn-warning w-100" onclick="showSection('btc-section')">
+              Predict Prices
+            </button>
+          </div>
+        </div>
+        <div class="col-md-6">
+          <div class="crypto-card p-4">
+            <h5 class="text-primary mb-3"><i class="fas fa-check-circle me-2 text-warning"></i>Validate Block</h5>
+            <button class="btn btn-outline-warning w-100" onclick="showSection('block-section')">
+              Validate Now
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Bitcoin Predict Price -->
+    <div id="btc-section" class="section d-none">
+      <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2 class="text-warning mb-0">
+          <i class="fab fa-bitcoin me-2"></i>Bitcoin Price Prediction
+        </h2>
+        <small class="text-muted">AI-powered price forecasting</small>
+      </div>
+
+      <div class="crypto-card p-4 mb-4">
+        <form id="predict-form">
+          <div class="row g-3">
+            <div class="col-md-5">
+              <label class="form-label text-primary">From Date</label>
+              <input type="date" class="form-control crypto-card border-secondary text-primary" name="from_date" required>
+            </div>
+            <div class="col-md-5">
+              <label class="form-label text-primary">To Date</label>
+              <input type="date" class="form-control crypto-card border-secondary text-primary" name="to_date" required>
+            </div>
+            <div class="col-md-2 d-flex align-items-end">
+              <button class="btn btn-warning w-100 fw-bold" type="submit">
+                <i class="fas fa-chart-line me-2"></i>Predict
+              </button>
+            </div>
+          </div>
+        </form>
+      </div>
+
+      <div id="predict-error" class="alert alert-danger mt-3 d-none"></div>
+
+      <!-- Model Metrics -->
+      <div id="model-metrics" class="crypto-card p-4 mb-4 d-none">
+        <h5 class="text-warning mb-3">Model Performance</h5>
+        <div class="row g-3 text-center">
+          <div class="col-4">
+            <div class="border-end border-secondary">
+              <h6 class="text-muted">Accuracy</h6>
+              <h5 class="text-success" id="metric-accuracy">-</h5>
+            </div>
+          </div>
+          <div class="col-4">
+            <div class="border-end border-secondary">
+              <h6 class="text-muted">R² Score</h6>
+              <h5 class="text-info" id="metric-r2">-</h5>
+            </div>
+          </div>
+          <div class="col-4">
+            <h6 class="text-muted">RMSE</h6>
+            <h5 class="text-warning" id="metric-rmse">-</h5>
+          </div>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="col-lg-12">
+          <div class="crypto-card p-4">
+            <h5 class="text-warning mb-3">Predicted Prices</h5>
+            <div class="table-responsive" style="max-height: 400px;">
+              <table class="table table-dark table-striped" id="predict-table">
+                <thead>
+                  <tr>
+                    <th class="text-primary">Date</th>
+                    <th class="text-primary">Predicted Price (USD)</th>
+                  </tr>
+                </thead>
+                <tbody></tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+		</div>
+		<div class="row">
+        <div class="col-lg-12">
+          <div class="crypto-card p-4">
+            <h5 class="text-warning mb-3">Price Chart</h5>
+            <canvas id="predict-chart" style="height: 400px;"></canvas>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Block Validation -->
+    <div id="block-section" class="section d-none">
+      <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2 class="text-warning mb-0">
+          <i class="fas fa-cube me-2"></i>Block Validation
+        </h2>
+        <small class="text-muted">Verify blockchain blocks</small>
+      </div>
+
+      <div class="crypto-card p-4 mb-4">
+        <form id="block-form">
+          <div class="row g-3">
+            <div class="col-md-6">
+              <label class="form-label text-primary">Block Height</label>
+              <input type="text" class="form-control crypto-card border-secondary text-primary" name="block_id" placeholder="Enter block number" required>
+            </div>
+            <div class="col-md-6">
+              <label class="form-label text-primary">Hash Value</label>
+              <input type="text" class="form-control crypto-card border-secondary text-primary" name="hash_value" placeholder="Enter block hash" required>
+            </div>
+            <div class="col-12">
+              <button class="btn btn-warning fw-bold px-4" type="submit">
+                <i class="fas fa-check-circle me-2"></i>Validate Block
+              </button>
+            </div>
+          </div>
+        </form>
+      </div>
+
+      <div id="block-result" class="d-none">
+        <div id="block-valid" class="alert d-none"></div>
+        <div class="crypto-card p-4 mt-3 d-none" id="block-details">
+          <h5 class="text-warning mb-3">Block Details</h5>
+          <div class="row g-3">
+            <div class="col-md-6">
+              <p class="mb-2"><b class="text-primary">Height:</b> <span id="bd-height" class="text-secondary">-</span></p>
+              <p class="mb-2"><b class="text-primary">Timestamp:</b> <span id="bd-time" class="text-secondary">-</span></p>
+              <p class="mb-2"><b class="text-primary">Tx Count:</b> <span id="bd-tx" class="text-secondary">-</span></p>
+            </div>
+            <div class="col-md-6">
+              <p class="mb-2"><b class="text-primary">Size (bytes):</b> <span id="bd-size" class="text-secondary">-</span></p>
+              <p class="mb-0"><b class="text-primary">Merkle Root:</b> <span id="bd-merkle" class="text-secondary">-</span></p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Block Hash Validate -->
+    <div id="block-validate" class="section d-none">
+      <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2 class="text-warning mb-0">
+          <i class="fas fa-hashtag me-2"></i>Block Hash Validation
+        </h2>
+        <small class="text-muted">Compute and verify block hashes</small>
+      </div>
+
+      <div class="crypto-card p-4 mb-4">
+        <form id="hash-form">
+          <div class="row g-3">
+            <div class="col-md-8">
+              <label class="form-label text-primary">Block Number / Hash</label>
+              <input type="text" class="form-control crypto-card border-secondary text-primary" name="block_query" placeholder="Enter block number or hash" required>
+            </div>
+            <div class="col-md-4 d-flex align-items-end">
+              <button class="btn btn-info w-100 fw-bold" type="submit">
+                <i class="fas fa-search me-2"></i>Fetch & Validate
+              </button>
+            </div>
+          </div>
+        </form>
+      </div>
+
+      <div id="hash-result" class="d-none">
+        <div id="hash-valid" class="alert d-none"></div>
+        <div class="crypto-card p-4 mt-3 d-none" id="hash-details">
+          <h5 class="text-warning mb-3">Block Information</h5>
+          <div class="row g-3">
+            <div class="col-md-6">
+              <p class="mb-2"><b class="text-primary">Height:</b> <span id="bh-height" class="text-secondary">-</span></p>
+              <p class="mb-2"><b class="text-primary">Timestamp:</b> <span id="bh-time" class="text-secondary">-</span></p>
+              <p class="mb-2"><b class="text-primary">Hash:</b> <span id="bh-hash" class="text-secondary">-</span></p>
+            </div>
+            <div class="col-md-6">
+              <p class="mb-2"><b class="text-primary">Tx Count:</b> <span id="bh-tx" class="text-secondary">-</span></p>
+              <p class="mb-0"><b class="text-primary">Merkle Root:</b> <span id="bh-merkle" class="text-secondary">-</span></p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- My Profile -->
+    <div id="profile-section" class="section d-none">
+      <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2 class="text-warning mb-0">
+          <i class="fas fa-user me-2"></i>My Profile
+        </h2>
+        <small class="text-muted">Account information</small>
+      </div>
+
+      <div class="crypto-card p-4">
+        <div class="row">
+          <div class="col-md-3 text-center">
+            <img src="https://cdn-icons-png.flaticon.com/512/3135/3135715.png" class="rounded-circle border border-warning mb-3" width="120">
+            <h5 class="text-primary">{{ user.name }}</h5>
+            <span class="badge bg-warning">Premium Member</span>
+          </div>
+          <div class="col-md-9">
+            <div class="row g-3">
+              <div class="col-md-6">
+                <p><b class="text-primary">Full Name:</b> <span class="text-secondary">{{ user.name }}</span></p>
+              </div>
+              <div class="col-md-6">
+                <p><b class="text-primary">Email:</b> <span class="text-secondary">{{ user.email }}</span></p>
+              </div>
+              <div class="col-md-6">
+                <p><b class="text-primary">Mobile:</b> <span class="text-secondary">{{ user.mobile }}</span></p>
+              </div>
+              <div class="col-md-6">
+                <p><b class="text-primary">Member Since:</b> <span class="text-secondary">2025</span></p>
+              </div>
+              <div class="col-12">
+                <p><b class="text-primary">Account Status:</b> <span class="badge bg-success">Active</span></p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Setting -->
+    <div id="setting-section" class="section d-none">
+      <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2 class="text-warning mb-0">
+          <i class="fas fa-cog me-2"></i>Account Settings
+        </h2>
+        <small class="text-muted">Manage your preferences</small>
+      </div>
+
+      <div class="crypto-card p-4">
+        <h5 class="text-warning mb-3">Update Password</h5>
+        <form id="updatePasswordForm">
+          <div class="row g-3">
+            <div class="col-md-6">
+              <label class="form-label text-primary">Old Password</label>
+              <input type="password" class="form-control crypto-card border-secondary text-primary" name="old_password" placeholder="Enter old password" required>
+            </div>
+            <div class="col-md-6">
+              <label class="form-label text-primary">New Password</label>
+              <input type="password" class="form-control crypto-card border-secondary text-primary" name="new_password" placeholder="Enter new password" required>
+            </div>
+            <div class="col-12">
+              <button class="btn btn-warning fw-bold px-4" type="submit">
+                <i class="fas fa-key me-2"></i>Update Password
+              </button>
+            </div>
+          </div>
+        </form>
+        <div id="passwordAlert" class="mt-3"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<style>
+.sidebar {
+  background: linear-gradient(180deg, #1a1a1a 0%, #2d2d2d 100%);
+  border-right: 1px solid rgba(247, 147, 26, 0.3);
+}
+
+.sidebar-nav .nav-link {
+  border-radius: 8px;
+  padding: 12px 15px;
+  transition: all 0.3s ease;
+  border: 1px solid transparent;
+}
+
+.sidebar-nav .nav-link:hover {
+  background: rgba(247, 147, 26, 0.1);
+  border-color: rgba(247, 147, 26, 0.3);
+  transform: translateX(5px);
+}
+
+.sidebar-nav .active-nav {
+  background: rgba(247, 147, 26, 0.2) !important;
+  border-color: rgba(247, 147, 26, 0.5) !important;
+  color: #f7931a !important;
+}
+
+.main-content {
+  background: transparent;
+}
+
+.table-dark {
+  background: rgba(30, 30, 30, 0.8);
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+.table-dark th {
+  border-bottom: 2px solid #f7931a;
+  background: rgba(247, 147, 26, 0.1);
+}
+
+.alert-success {
+  background: rgba(40, 167, 69, 0.1);
+  border: 1px solid rgba(40, 167, 69, 0.3);
+  color: #28a745;
+}
+
+.alert-danger {
+  background: rgba(220, 53, 69, 0.1);
+  border: 1px solid rgba(220, 53, 69, 0.3);
+  color: #dc3545;
+}
+
+.alert-info {
+  background: rgba(23, 162, 184, 0.1);
+  border: 1px solid rgba(23, 162, 184, 0.3);
+  color: #17a2b8;
+}
+</style>
+{% endblock %}
+
+{% block scripts %}
+<!-- Chart.js CDN -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<script>
+// Handle Password Update
+$("#updatePasswordForm").submit(function(e) {
+  e.preventDefault();
+  $.ajax({
+    url: "/update_password",
+    type: "POST",
+    data: $(this).serialize(),
+    dataType: "json",
+    success: function(res) {
+      if(res.status === "success") {
+        $("#passwordAlert").html('<div class="alert alert-success">'+res.message+'</div>');
+        $("#updatePasswordForm")[0].reset();
+      } else {
+        $("#passwordAlert").html('<div class="alert alert-danger">'+res.message+'</div>');
+      }
+    },
+    error: function(xhr) {
+      $("#passwordAlert").html('<div class="alert alert-danger">Server error. Please try again.</div>');
+    }
+  });
+});
+
+// ===== Predict Prices (AJAX) =====
+let predictChart = null;
+
+$("#predict-form").on("submit", function(e){
+  e.preventDefault();
+  $("#predict-error").addClass("d-none").text("");
+  $("#predict-table tbody").empty();
+  $("#model-metrics").addClass("d-none");
+  const formData = new FormData(this);
+
+  fetch("/predict_prices", { method: "POST", body: formData })
+    .then(res => res.json())
+    .then(data => {
+      if (!data.ok) {
+        $("#predict-error").removeClass("d-none").text(data.error || "Failed to predict.");
+        return;
+      }
+      
+      // Show model metrics if available
+      if (data.model_metrics) {
+        $("#model-metrics").removeClass("d-none");
+        $("#metric-accuracy").text(data.model_metrics.accuracy_within_5pct + "%");
+        $("#metric-r2").text(data.model_metrics.r2_score);
+        $("#metric-rmse").text("$" + data.model_metrics.rmse.toLocaleString());
+      }
+      
+      const rows = data.rows || [];
+      // Table
+      const tbody = $("#predict-table tbody");
+      rows.forEach(r => {
+        const tr = `<tr><td class="text-primary">${r.date}</td><td class="text-success">$${r.predicted.toLocaleString()}</td></tr>`;
+        tbody.append(tr);
+      });
+      // Chart
+      const labels = rows.map(r => r.date);
+      const values = rows.map(r => r.predicted);
+      const ctx = document.getElementById("predict-chart").getContext("2d");
+      if (predictChart) predictChart.destroy();
+      predictChart = new Chart(ctx, {
+        type: "line",
+        data: {
+          labels: labels,
+          datasets: [{
+            label: "Predicted BTC Price (USD)",
+            data: values,
+            borderColor: '#f7931a',
+            backgroundColor: 'rgba(247, 147, 26, 0.1)',
+            borderWidth: 3,
+            fill: true,
+            tension: 0.4
+          }]
+        },
+        options: {
+          responsive: false,
+          maintainAspectRatio: false,
+          plugins: {
+            legend: {
+              labels: { color: '#ffffff' }
+            }
+          },
+          scales: {
+            x: {
+              ticks: { color: '#b0b0b0' },
+              grid: { color: 'rgba(255,255,255,0.1)' }
+            },
+            y: {
+              ticks: { 
+                color: '#b0b0b0',
+                callback: function(value) {
+                  return '$' + value.toLocaleString();
+                }
+              },
+              grid: { color: 'rgba(255,255,255,0.1)' }
+            }
+          }
+        }
+      });
+    })
+    .catch(err => {
+      $("#predict-error").removeClass("d-none").text(err.toString());
+    });
+});
+
+// ===== Block Validation =====
+$("#block-form").on("submit", function(e){
+  e.preventDefault();
+  const formData = new FormData(this);
+
+  fetch("/validate_block", { method: "POST", body: formData })
+    .then(res => res.json())
+    .then(data => {
+      $("#block-result").removeClass("d-none");
+      const validBox = $("#block-valid");
+      const detailsCard = $("#block-details");
+
+      if (!data.ok) {
+        validBox.removeClass("d-none alert-success").addClass("alert-danger")
+                .text(data.error || "Validation failed.");
+        detailsCard.addClass("d-none");
+        return;
+      }
+
+      if (data.valid) {
+        validBox.removeClass("d-none alert-danger").addClass("alert-success")
+                .html('<i class="fas fa-check-circle me-2"></i>Valid ✅ — Hash matches this block height.');
+        $("#bd-height").text(data.details.height ?? "-");
+        $("#bd-time").text(data.details.timestamp ? new Date(data.details.timestamp * 1000).toLocaleString() : "-");
+        $("#bd-tx").text(data.details.tx_count ?? "-");
+        $("#bd-size").text(data.details.size ? data.details.size.toLocaleString() : "-");
+        $("#bd-merkle").text(data.details.merkle_root ?? "-");
+        detailsCard.removeClass("d-none");
+      } else {
+        validBox.removeClass("d-none alert-success").addClass("alert-danger")
+                .html(`<i class="fas fa-times-circle me-2"></i>Invalid ❌ — Expected Hash: <code>${data.expected_hash}</code>`);
+        detailsCard.addClass("d-none");
+      }
+    })
+    .catch(err => {
+      $("#block-result").removeClass("d-none");
+      $("#block-valid").removeClass("d-none alert-success").addClass("alert-danger")
+                      .html('<i class="fas fa-exclamation-triangle me-2"></i>' + err.toString());
+      $("#block-details").addClass("d-none");
+    });
+});
+
+// ===== Block Hash Validate =====
+$("#hash-form").on("submit", function(e){
+  e.preventDefault();
+  const formData = new FormData(this);
+
+  fetch("/hash_validate", { method: "POST", body: formData })
+    .then(res => res.json())
+    .then(data => {
+      $("#hash-result").removeClass("d-none");
+      const validBox = $("#hash-valid");
+      const detailsCard = $("#hash-details");
+
+      if (!data.ok) {
+        validBox.removeClass("d-none alert-success").addClass("alert-danger")
+                .text(data.error || "Could not fetch block.");
+        detailsCard.addClass("d-none");
+        return;
+      }
+
+      if (data.valid) {
+        validBox.removeClass("d-none alert-danger").addClass("alert-success")
+                .html('<i class="fas fa-check-circle me-2"></i>Hash ✅ — Block hash is valid.');
+        $("#bh-height").text(data.details.height ?? "-");
+        $("#bh-hash").text(data.details.hash ?? "-");
+        $("#bh-time").text(data.details.timestamp ? new Date(data.details.timestamp * 1000).toLocaleString() : "-");
+        $("#bh-tx").text(data.details.tx_count ?? "-");
+        $("#bh-merkle").text(data.details.merkle_root ?? "-");
+        detailsCard.removeClass("d-none");
+      } else {
+        validBox.removeClass("d-none alert-success").addClass("alert-danger")
+                .html('<i class="fas fa-times-circle me-2"></i>Invalid ❌ — Block hash mismatch.');
+        detailsCard.addClass("d-none");
+      }
+    })
+    .catch(err => {
+      $("#hash-result").removeClass("d-none");
+      $("#hash-valid").removeClass("d-none alert-success").addClass("alert-danger")
+                      .html('<i class="fas fa-exclamation-triangle me-2"></i>' + err.toString());
+      $("#hash-details").addClass("d-none");
+    });
+});
+
+// Toggle Sections
+function showSection(id) {
+  document.querySelectorAll('.section').forEach(sec => sec.classList.add('d-none'));
+  document.getElementById(id).classList.remove('d-none');
+  
+  // Update active nav
+  document.querySelectorAll('.sidebar-nav .nav-link').forEach(link => {
+    link.classList.remove('active-nav');
+  });
+  event.target.classList.add('active-nav');
+  
+  // Update last updated time
+  document.getElementById('last-updated').textContent = new Date().toLocaleTimeString();
+}
+
+// Load Bitcoin Price
+function loadPrice() {
+  $.get("https://api.coingecko.com/api/v3/simple/price?ids=bitcoin&vs_currencies=usd", function(data){
+    $("#btc-price").text("$" + data.bitcoin.usd.toLocaleString());
+  });
+}
+
+$(document).ready(function(){
+  loadPrice();
+  setInterval(loadPrice, 30000);
+  
+  // Set dashboard as active
+  document.querySelector('.sidebar-nav .nav-link').classList.add('active-nav');
+});
+</script>
+{% endblock %}

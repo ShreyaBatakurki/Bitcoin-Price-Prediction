@@ -1,0 +1,364 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{% block title %}Bitcoin Price Prediction{% endblock %}</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+  <style>
+    :root {
+      --primary-orange: #f7931a;
+      --dark-bg: #0a0a0a;
+      --card-bg: rgba(30, 30, 30, 0.8);
+      --text-primary: #ffffff;
+      --text-secondary: #b0b0b0;
+      --text-muted: #888888;
+    }
+    
+    body {
+      background: linear-gradient(135deg, var(--dark-bg) 0%, #1a1a1a 50%, #2d2d2d 100%);
+      color: var(--text-primary);
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+    
+    .crypto-card {
+      background: var(--card-bg);
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(247, 147, 26, 0.2);
+      border-radius: 15px;
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+      color: var(--text-primary);
+    }
+    
+    .crypto-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 15px 30px rgba(247, 147, 26, 0.3);
+      border-color: var(--primary-orange);
+    }
+    
+    .nav-gradient {
+      background: linear-gradient(90deg, var(--primary-orange) 0%, #ffab00 100%);
+    }
+    
+    .price-ticker {
+      background: linear-gradient(90deg, #1a1a1a, #2d2d2d);
+      border-bottom: 2px solid var(--primary-orange);
+      padding: 8px 0;
+      overflow: hidden;
+    }
+    
+    .ticker-content {
+      display: inline-block;
+      white-space: nowrap;
+      animation: ticker 30s linear infinite;
+      color: var(--text-primary);
+      font-weight: 600;
+    }
+    
+    @keyframes ticker {
+      0% { transform: translateX(100%); }
+      100% { transform: translateX(-100%); }
+    }
+    
+    .feature-icon {
+      font-size: 2.5rem;
+      color: var(--primary-orange);
+      margin-bottom: 1rem;
+    }
+    
+    .news-slider {
+      background: rgba(247, 147, 26, 0.1);
+      border-left: 4px solid var(--primary-orange);
+      padding: 15px;
+      border-radius: 8px;
+      color: var(--text-primary);
+    }
+    
+    .text-muted {
+      color: var(--text-muted) !important;
+    }
+    
+    .text-secondary {
+      color: var(--text-secondary) !important;
+    }
+    
+    .btn-warning {
+      background: linear-gradient(135deg, var(--primary-orange), #ff6b00);
+      border: none;
+      color: #000;
+      font-weight: 600;
+    }
+    
+    .btn-outline-warning {
+      border-color: var(--primary-orange);
+      color: var(--primary-orange);
+    }
+    
+    .btn-outline-warning:hover {
+      background-color: var(--primary-orange);
+      color: #000;
+    }
+    
+    /* Image Slider Styles */
+    .custom-slider {
+      border-radius: 15px;
+      overflow: hidden;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+    }
+    
+    .custom-slider .carousel-item img {
+      height: 400px;
+      object-fit: cover;
+    }
+    
+    .carousel-caption {
+      background: rgba(0, 0, 0, 0.7);
+      border-radius: 10px;
+      padding: 20px;
+      bottom: 20px;
+    }
+    
+    .carousel-control-prev, .carousel-control-next {
+      width: 5%;
+    }
+    
+    .carousel-indicators button {
+      background-color: var(--primary-orange);
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      margin: 0 5px;
+    }
+  </style>
+</head>
+<body>
+
+<!-- Price Ticker -->
+<!--
+<div class="price-ticker">
+  <div class="ticker-content">
+    <span class="fw-bold">📈 LIVE CRYPTO UPDATE:</span>
+    <span id="ticker-prices" class="ms-3">Loading market data...</span>
+  </div>
+</div>
+-->
+<!-- Navbar -->
+<nav class="navbar navbar-expand-lg navbar-dark nav-gradient">
+  <div class="container">
+    <a class="navbar-brand fw-bold" href="/">
+      <i class="fab fa-bitcoin me-2"></i>LedgerVista
+    </a>
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarNav">
+  <ul class="navbar-nav ms-auto">
+    <li class="nav-item">
+      <a class="nav-link text-white nav-custom" href="/">
+        <i class="fas fa-home me-1"></i>Home
+      </a>
+    </li>
+    <li class="nav-item">
+      <a class="nav-link text-white nav-custom" href="/about">
+        <i class="fas fa-info-circle me-1"></i>About
+      </a>
+    </li>
+    <li class="nav-item">
+      <a class="nav-link text-white nav-custom" href="/contact">
+        <i class="fas fa-envelope me-1"></i>Contact
+      </a>
+    </li>
+    {% if session.get('user') %}
+      <li class="nav-item">
+        <a class="nav-link text-white nav-custom" href="/dashboard">
+          <i class="fas fa-chart-line me-1"></i>Dashboard
+        </a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link text-white nav-custom" href="/logout">
+          <i class="fas fa-sign-out-alt me-1"></i>Logout
+        </a>
+      </li>
+    {% else %}
+      <li class="nav-item">
+        <a class="nav-link text-white nav-custom" href="#" data-bs-toggle="modal" data-bs-target="#loginModal">
+          <i class="fas fa-sign-in-alt me-1"></i>Sign In
+        </a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link text-white nav-custom" href="#" data-bs-toggle="modal" data-bs-target="#signupModal">
+          <i class="fas fa-user-plus me-1"></i>Sign Up
+        </a>
+      </li>
+    {% endif %}
+  </ul>
+</div>
+
+<style>
+.nav-custom {
+  color: white !important;
+  transition: all 0.3s ease;
+  font-weight: normal;
+  padding: 8px 16px !important;
+  border-radius: 6px;
+  margin: 0 2px;
+}
+
+.nav-custom:hover {
+  font-weight: bold !important;
+  background: rgba(255, 255, 255, 0.1);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.nav-custom:active {
+  transform: translateY(0);
+}
+</style>
+  </div>
+</nav>
+
+<!-- Main Content -->
+<div class="container my-4">
+  {% block content %}{% endblock %}
+</div>
+
+<!-- Footer -->
+<footer class="text-center py-4 mt-5" style="background: rgba(247, 147, 26, 0.1); border-top: 1px solid rgba(247, 147, 26, 0.3);">
+  <div class="container">
+    <div class="row">
+      <div class="col-md-4 mb-3">
+        <h5 class="text-warning"><i class="fab fa-bitcoin me-2"></i> LedgerVista</h5>
+        <p class="text-secondary">Advanced Bitcoin price prediction using machine learning and real-time market analysis.</p>
+      </div>
+      <div class="col-md-4 mb-3">
+        <h5 class="text-warning">Quick Links</h5>
+        <ul class="list-unstyled">
+          <li><a href="/" class="text-secondary text-decoration-none">Home</a></li>
+          <li><a href="/about" class="text-secondary text-decoration-none">About Us</a></li>
+          <li><a href="/contact" class="text-secondary text-decoration-none">Contact</a></li>
+        </ul>
+      </div>
+      <div class="col-md-4 mb-3">
+        <h5 class="text-warning">Connect With Us</h5>
+        <div class="social-links">
+          <a href="#" class="text-warning me-3"><i class="fab fa-twitter fa-lg"></i></a>
+          <a href="#" class="text-warning me-3"><i class="fab fa-telegram fa-lg"></i></a>
+          <a href="#" class="text-warning me-3"><i class="fab fa-github fa-lg"></i></a>
+        </div>
+      </div>
+    </div>
+    <hr style="border-color: var(--primary-orange);">
+    <p class="text-secondary mb-0">&copy; 2025 LedgerVista. All rights reserved.</p>
+  </div>
+</footer>
+
+<!-- Modals -->
+<div class="modal fade" id="signupModal" tabindex="-1">
+  <div class="modal-dialog">
+    <form id="signupForm" method="POST" action="/signup" class="modal-content crypto-card">
+      <div class="modal-header border-secondary">
+        <h5 class="modal-title text-primary"><i class="fas fa-user-plus me-2"></i>Create Account</h5>
+        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+      </div>
+      <div class="modal-body">
+        <div id="signupAlert"></div>
+        <input class="form-control mb-3 crypto-card border-secondary text-primary" type="text" name="name" placeholder="Full Name" required>
+        <input class="form-control mb-3 crypto-card border-secondary text-primary" type="email" name="email" placeholder="Email" required>
+        <input class="form-control mb-3 crypto-card border-secondary text-primary" type="text" name="mobile" placeholder="Mobile Number" required>
+        <input class="form-control mb-2 crypto-card border-secondary text-primary" type="password" name="password" placeholder="Password" required>
+        <small class="text-muted">Password must contain 8+ characters with uppercase, lowercase, number, and special character.</small>
+      </div>
+      <div class="modal-footer border-secondary">
+        <button class="btn btn-warning w-100 fw-bold" type="submit">Create Account</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<div class="modal fade" id="loginModal" tabindex="-1">
+  <div class="modal-dialog">
+    <form id="loginForm" method="POST" action="/login" class="modal-content crypto-card">
+      <div class="modal-header border-secondary">
+        <h5 class="modal-title text-primary"><i class="fas fa-sign-in-alt me-2"></i>Welcome Back</h5>
+        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+      </div>
+      <div class="modal-body">
+        <div id="loginAlert"></div>
+        <input class="form-control mb-3 crypto-card border-secondary text-primary" type="email" name="email" placeholder="Email" required>
+        <input class="form-control mb-3 crypto-card border-secondary text-primary" type="password" name="password" placeholder="Password" required>
+      </div>
+      <div class="modal-footer border-secondary">
+        <button class="btn btn-warning w-100 fw-bold" type="submit">Sign In</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+// Enhanced ticker functionality
+function updateTicker() {
+  $.get("https://api.coingecko.com/api/v3/simple/price?ids=bitcoin,ethereum,ripple,litecoin,cardano&vs_currencies=usd&include_24hr_change=true", function(data){
+    const tickerContent = 
+      `BTC: $${data.bitcoin.usd.toLocaleString()} (${data.bitcoin.usd_24h_change?.toFixed(2)}%) | 
+       ETH: $${data.ethereum.usd.toLocaleString()} (${data.ethereum.usd_24h_change?.toFixed(2)}%) | 
+       XRP: $${data.ripple.usd.toLocaleString()} (${data.ripple.usd_24h_change?.toFixed(2)}%) | 
+       LTC: $${data.litecoin.usd.toLocaleString()} (${data.litecoin.usd_24h_change?.toFixed(2)}%) | 
+       ADA: $${data.cardano.usd.toLocaleString()} (${data.cardano.usd_24h_change?.toFixed(2)}%)`;
+    
+    $("#ticker-prices").html(tickerContent);
+  });
+}
+
+$(document).ready(function(){
+  updateTicker();
+  setInterval(updateTicker, 30000);
+  
+  // Form handling code remains the same...
+  $("#signupForm").submit(function(e) {
+    e.preventDefault();
+    $.ajax({
+      url: "/signup",
+      type: "POST",
+      data: $(this).serialize(),
+      success: function(res) {
+        if(res.status === "success") {
+          $("#signupAlert").html('<div class="alert alert-success">'+res.message+'</div>');
+          $("#signupForm")[0].reset();
+        } else {
+          $("#signupAlert").html('<div class="alert alert-danger">'+res.message+'</div>');
+        }
+      }
+    });
+  });
+
+  $("#loginForm").submit(function(e) {
+    e.preventDefault();
+    $.ajax({
+      url: "/login",
+      type: "POST",
+      data: $(this).serialize(),
+      dataType: "json",
+      success: function(res) {
+        if(res.status === "success") {
+          $("#loginAlert").html('<div class="alert alert-success">'+res.message+'</div>');
+          setTimeout(()=> window.location.href = "/dashboard", 1000);
+        } else {
+          $("#loginAlert").html('<div class="alert alert-danger">'+res.message+'</div>');
+        }
+      },
+      error: function(xhr) {
+        $("#loginAlert").html('<div class="alert alert-danger">Server error. Please try again.</div>');
+      }
+    });
+  });
+});
+</script>
+
+{% block scripts %}{% endblock %}
+</body>
+</html>
